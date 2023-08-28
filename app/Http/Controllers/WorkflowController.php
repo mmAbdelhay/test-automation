@@ -11,4 +11,10 @@ class WorkflowController extends Controller
     {
         return Inertia::render('Automation/Automation');
     }
+
+    public function create(Request $request)
+    {
+        dd($request->all());
+        return Inertia::render('Automation/Automation', ['request' => $request->all()]);
+    }
 }

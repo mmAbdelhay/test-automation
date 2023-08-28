@@ -1,7 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
+import MonacoEditor from 'react-monaco-editor';
+import { router } from '@inertiajs/react'
+
 
 function InteractionRecorder() {
     const [recording, setRecording] = useState(false);
+    const [startPoint, setStartPoint] = useState('');
     const [recordedActions, setRecordedActions] = useState([]);
     const iframeRef = useRef(null);
 
@@ -21,7 +25,6 @@ function InteractionRecorder() {
                 const action = {
                     type: 'click',
                     target: uniqueSelector,
-                    timestamp: Date.now(),
                 };
                 setRecordedActions([...recordedActions, action]);
             }
@@ -35,7 +38,6 @@ function InteractionRecorder() {
                     type: 'keydown',
                     target: uniqueSelector,
                     key: event.key,
-                    timestamp: Date.now(),
                 };
                 setRecordedActions([...recordedActions, action]);
             }
@@ -91,27 +93,61 @@ function InteractionRecorder() {
         // Export the recorded actions as JSON
         const jsonRecording = JSON.stringify(recordedActions, null, 2);
         console.log(jsonRecording);
+        router.post('/workflows/store', {recorded_action: recordedActions});
     };
 
     return (
-        <div>
-            <button onClick={startRecording} disabled={recording}>
-                Start Recording
-            </button>
-            <button onClick={stopRecording} disabled={!recording}>
-                Stop Recording
-            </button>
-            <button onClick={exportRecording}>Export Recording</button>
-            <iframe
-                ref={iframeRef}
-                src={"http://127.0.0.1:8000/"}
-                title="Embedded Content"
-                width={"100%"}
-                height="500"
-            ></iframe>
-            <div>
-                <h2>Recorded Actions:</h2>
-                <pre>{JSON.stringify(recordedActions, null, 2)}</pre>
+        <div style={{width: '95vw'}}>
+            <div style={{display: "flex", gap: 7}}>
+                <button style={{border: "1px solid white", borderRadius: 5, padding: 4}} onClick={startRecording}
+                        disabled={recording}>
+                    Start Recording
+                </button>
+                <button style={{border: "1px solid white", borderRadius: 5, padding: 4}} onClick={stopRecording}
+                        disabled={!recording}>
+                    Stop Recording
+                </button>
+                <button style={{border: "1px solid white", borderRadius: 5, padding: 4}}
+                        disabled={recordedActions.length <= 0}
+                        onClick={exportRecording}>Export Recording
+                </button>
+                <div>
+                    <label>start point : </label>
+                    <input type="text" value={startPoint} style={{color: "black"}}
+                           onChange={e => setStartPoint(e.target.value)}/>
+                </div>
+            </div>
+            <div style={{margin: 10, display: "flex", flexDirection: "row", width: "100%", height: "75vh"}}>
+
+                <div style={{border: "2px solid white", borderRadius: 5, width: "70%"}}>
+                    <iframe
+                        ref={iframeRef}
+                        src={"http://127.0.0.1:8000/" + startPoint}
+                        title="Embedded Content"
+                        width={"100%"}
+                        height="700"
+                    ></iframe>
+                </div>
+
+                <div style={{
+                    border: "2px solid white",
+                    width: "30%",
+                    overflow: "scroll",
+                    marginLeft: '10px',
+                    padding: 5
+                }}>
+                    <h2>Recorded Actions:</h2>
+                    <MonacoEditor
+                        language="json" // Set the language for syntax highlighting
+                        theme="vs-dark" // Set the editor theme
+                        value={JSON.stringify(recordedActions, null, 2)}
+                        options={{
+                            selectOnLineNumbers: true, // Enable line number selection
+                            readOnly: true
+                        }}
+                    />
+                    {/*<pre>{JSON.stringify(recordedActions, null, 2)}</pre>*/}
+                </div>
             </div>
         </div>
     );

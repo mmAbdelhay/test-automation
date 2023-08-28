@@ -13,7 +13,7 @@ export default function Automation({auth}) {
         >
             <Head title="Automation workflow"/>
 
-            <div className="container m-5" style={{backgroundColor: "white"}}>
+            <div className="container m-5" style={{color: "white"}}>
                 {/*<label>Domain : </label>*/}
                 {/*<input type="text" onChange={(e) => setDomain(e.target.value)} value={domain}*/}
                 {/*       className={'form-control'}/>*/}
