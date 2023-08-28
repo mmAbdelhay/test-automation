@@ -4,7 +4,6 @@ import {useState} from "react";
 import InteractionRecorder from "@/Pages/Automation/InterctionRecorder.jsx";
 
 export default function Automation({auth}) {
-    const [domain, setDomain] = useState('');
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -18,7 +17,7 @@ export default function Automation({auth}) {
                 {/*<input type="text" onChange={(e) => setDomain(e.target.value)} value={domain}*/}
                 {/*       className={'form-control'}/>*/}
 
-                <InteractionRecorder domain={domain} />
+                <InteractionRecorder />
             </div>
         </AuthenticatedLayout>
     );

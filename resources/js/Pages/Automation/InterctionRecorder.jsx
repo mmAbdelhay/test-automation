@@ -6,6 +6,7 @@ import { router } from '@inertiajs/react'
 function InteractionRecorder() {
     const [recording, setRecording] = useState(false);
     const [startPoint, setStartPoint] = useState('');
+    const [name, setName] = useState('');
     const [recordedActions, setRecordedActions] = useState([]);
     const iframeRef = useRef(null);
 
@@ -34,14 +35,19 @@ function InteractionRecorder() {
             if (recording) {
                 const target = event.target;
                 const uniqueSelector = getUniqueSelector(target, iframeRef.current);
-                const action = {
-                    type: 'keydown',
-                    target: uniqueSelector,
-                    key: event.key,
-                };
-                setRecordedActions([...recordedActions, action]);
+                const keysToExclude = ['Shift', 'Tab', 'Control', 'Alt', 'Enter'];
+
+                if (!keysToExclude.includes(event.key)) {
+                    const action = {
+                        type: 'keydown',
+                        target: uniqueSelector,
+                        key: event.key,
+                    };
+                    setRecordedActions([...recordedActions, action]);
+                }
             }
         };
+
 
 
         if (iframeDocument) {
@@ -93,7 +99,15 @@ function InteractionRecorder() {
         // Export the recorded actions as JSON
         const jsonRecording = JSON.stringify(recordedActions, null, 2);
         console.log(jsonRecording);
-        router.post('/workflows/store', {recorded_action: recordedActions});
+        if(name.length <= 0) {
+            alert('please fill your workflow name');
+            return;
+        }
+        router.post('/workflows/store', {
+            recorded_actions: recordedActions,
+            start_point: startPoint,
+            name: name
+        });
     };
 
     return (
@@ -111,6 +125,11 @@ function InteractionRecorder() {
                         disabled={recordedActions.length <= 0}
                         onClick={exportRecording}>Export Recording
                 </button>
+                <div>
+                    <label>name : </label>
+                    <input type="text" value={name} style={{color: "black"}}
+                           onChange={e => setName(e.target.value)}/>
+                </div>
                 <div>
                     <label>start point : </label>
                     <input type="text" value={startPoint} style={{color: "black"}}

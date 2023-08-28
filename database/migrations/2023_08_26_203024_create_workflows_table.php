@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('workflows', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name')->nullable();
             $table->string('path');
-            $table->string('domain');
+            $table->string('domain')->nullable();
+            $table->json('workflow');
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->on('users');
             $table->timestamps();
         });
     }

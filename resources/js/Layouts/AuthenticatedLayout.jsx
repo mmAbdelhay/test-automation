@@ -27,6 +27,9 @@ export default function Authenticated({ user, header, children }) {
                                 <NavLink href={route('automation.index')} active={route().current('automation.index')}>
                                     Automation testing
                                 </NavLink>
+                                <NavLink href={route('workflows.index')} active={route().current('workflows.index')}>
+                                    Workflows
+                                </NavLink>
                             </div>
                         </div>
 

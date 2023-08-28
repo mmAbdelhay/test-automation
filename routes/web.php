@@ -33,9 +33,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/automation', [\App\Http\Controllers\WorkflowController::class, 'index'])->name('automation.index');
 
-    Route::post('/workflows/store', [\App\Http\Controllers\WorkflowController::class, 'create']);
+    Route::get('/workflows/create', [\App\Http\Controllers\WorkflowController::class, 'create'])->name('automation.index');
+    Route::post('/workflows/store', [\App\Http\Controllers\WorkflowController::class, 'store'])->name('workflows.store');
+    Route::get('/workflows', [\App\Http\Controllers\WorkflowController::class, 'index'])->name('workflows.index');
+    Route::get('/workflows/{workflow}', [\App\Http\Controllers\WorkflowController::class, 'show'])->name('workflows.show');
 });
 
 require __DIR__.'/auth.php';

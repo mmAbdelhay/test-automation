@@ -13,7 +13,8 @@ class Workflow extends Model
         'name',
         'path',
         'domain',
-        'user_id'
+        'user_id',
+        'workflow'
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo

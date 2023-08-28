@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use PhpParser\Node\Expr\Closure;
+use Symfony\Component\HttpFoundation\Response;
 use Tightenco\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
@@ -41,4 +43,5 @@ class HandleInertiaRequests extends Middleware
             },
         ]);
     }
+
 }
