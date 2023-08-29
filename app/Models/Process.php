@@ -5,25 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Workflow extends Model
+class Process extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'path',
-        'domain',
+        'process_id',
         'user_id',
-        'workflow'
+        'workflow_id'
     ];
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function processes()
+    public function workflow()
     {
-        return $this->hasMany(Process::class, 'workflow_id', 'id');
+        return $this->belongsTo(Workflow::class, 'workflow_id');
     }
 }

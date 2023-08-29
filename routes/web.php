@@ -38,6 +38,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/workflows/store', [\App\Http\Controllers\WorkflowController::class, 'store'])->name('workflows.store');
     Route::get('/workflows', [\App\Http\Controllers\WorkflowController::class, 'index'])->name('workflows.index');
     Route::get('/workflows/{workflow}', [\App\Http\Controllers\WorkflowController::class, 'show'])->name('workflows.show');
+    Route::get('/workflows/{workflow}/run', [\App\Http\Controllers\WorkflowController::class, 'run'])->name('workflows.run');
+    Route::get('/workflows/{workflow}/stop/{process}', [\App\Http\Controllers\WorkflowController::class, 'stop'])->name('workflows.stop');
+    Route::put('/workflows/{workflow}/change', [\App\Http\Controllers\WorkflowController::class, 'changeTestFileContent'])->name('workflows.change');
 });
 
 require __DIR__.'/auth.php';

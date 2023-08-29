@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\File;
-use function PHPUnit\Framework\throwException;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
+
 
 class WorkflowController extends Controller
 {
@@ -69,6 +71,30 @@ class WorkflowController extends Controller
         return Inertia::render('Automation/Automation', ['request' => $request->all()]);
     }
 
+    public function run(Workflow $workflow)
+    {
+        $command = "node storage/app/" . $workflow->path . " > " . storage_path('app/tests/output/output.txt') . " 2>&1 & echo $!";
+        chdir(base_path());
+        $pid = exec($command, $output, $exitCode);
+
+        $process = \App\Models\Process::create([
+            'process_id' => $pid,
+            'user_id' => auth()->id(),
+            'workflow_id' => $workflow->id
+        ]);
+
+        return Inertia::render('Automation/Show', [
+            'process' => $process, 'processInstance' => $pid,
+        ]);
+    }
+
+    public function stop(Workflow $workflow, \App\Models\Process $process)
+    {
+        abort_if($process->workflow->id !== $workflow->id, 'process must be a child of this workflow');
+        exec("kill $process->id");
+        return Inertia::render('Automation/Show');
+    }
+
     public function getFileContent($fileName)
     {
         $filePath = base_path('tests/Automation/' . $fileName);
@@ -85,5 +111,11 @@ class WorkflowController extends Controller
         $path = 'tests/Automation/' . auth()->id() . "/" . auth()->user()->name . '_' . now() . ".js";
         Storage::put($path, $stringContent);
         return $path;
+    }
+
+    public function changeTestFileContent(Workflow $workflow, Request $request)
+    {
+        file_put_contents(storage_path("app/$workflow->path"), $request->newCode);
+        return Inertia::render('Automation/Show');
     }
 }
