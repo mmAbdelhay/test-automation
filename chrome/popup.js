@@ -2,18 +2,10 @@
 let recordedEvents = [];
 let isRecording =  false;
 
-console.log("in popup")
-
-
-
 chrome.storage.local.get(['isRecording'], (result) => {
-    console.log({recordedEvents})
      isRecording = result.isRecording || false;
-
     // Update the UI based on the stored recording status
     updateUI(isRecording);
-
-
 
     // Add event listeners
     document.getElementById('startButton').addEventListener('click',recordEvents);
@@ -23,7 +15,6 @@ chrome.storage.local.get(['isRecording'], (result) => {
     document.getElementById('exportButton').addEventListener('click', exportEvents);
 
     chrome.tabs.executeScript({ file: 'content.js' });
-    console.log(isRecording)
 
     startListeningForEvents(isRecording);
 
@@ -50,15 +41,11 @@ function updateUI(isRecording) {
     }
 }
 function recordEvents() {
-    console.log("herereererer")
     isRecording = true;
     recordedEvents = [];
-
     // Store the updated recording status
     chrome.storage.local.set({ isRecording: true });
-    chrome.storage.local.get(['isRecording'], (result) => {
-        console.log({result})
-    })
+
     // Update the UI
     updateUI(true);
 
@@ -70,9 +57,7 @@ function recordEvents() {
 
 
 function stopRecording() {
-    console.log('stop clicked')
     isRecording = false;
-    console.log(recordedEvents);
 
     // Store the updated recording status
     chrome.storage.local.set({ isRecording: false });
@@ -85,7 +70,6 @@ function stopRecording() {
     document.getElementById('stopButton').disabled = true;
 
     // Output the recorded events (you can send them to a server or store locally)
-    console.log(recordedEvents);
 }
 function exportEvents() {
     chrome.runtime?.sendMessage({ type: 'exportEvents' },(data)=>{
@@ -99,6 +83,7 @@ function exportEvents() {
             filename: 'recorded_events.json',
             saveAs: true,
         });
+        recordedEvents=[];
     });
     // if (recordedEvents.length > 0) {
 

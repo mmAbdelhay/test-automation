@@ -1,19 +1,16 @@
-console.log("in background")
 let recordedEvents = [];
+let isRecording = false;
+
 chrome.runtime?.onMessage.addListener((message, sender,sendResponse) => {
-    // console.log({isRecording})
-    // console.log({sendResponse})
+    chrome.storage.local.get(['isRecording'], (result) => {
+        isRecording = result ||false;
+    })
     if (message.type === 'exportEvents') {
         sendResponse(recordedEvents)
+        recordedEvents = [];
     } else {
-        // console.log("in onMessage background")
-        // console.log({message})
-        // console.log({isRecording})
-        // console.log({recordedEvents})
-        // if (isRecording) {
+        if (isRecording) {
             recordedEvents.push(message);
-
-            // console.log({recordedEvents})
-        // }
+        }
     }
 });
