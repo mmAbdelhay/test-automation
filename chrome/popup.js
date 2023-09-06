@@ -31,7 +31,7 @@ chrome.storage.local.get(['isRecording'], (result) => {
 
 });
 function startListeningForEvents(isRecording) {
-    chrome.runtime.onMessage.addListener((message) => {
+    chrome.runtime?.onMessage.addListener((message) => {
         if (isRecording) {
             recordedEvents.push(message);
         }
@@ -88,15 +88,19 @@ function stopRecording() {
     console.log(recordedEvents);
 }
 function exportEvents() {
-    // if (recordedEvents.length > 0) {
-    const jsonContent = JSON.stringify(recordedEvents, null, 2);
-    const blob = new Blob([jsonContent], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    chrome.runtime?.sendMessage({ type: 'exportEvents' },(data)=>{
+        recordedEvents = data
+        const jsonContent = JSON.stringify(recordedEvents, null, 2);
+        const blob = new Blob([jsonContent], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
 
-    chrome.downloads.download({
-        url: url,
-        filename: 'recorded_events.json',
-        saveAs: true,
+        chrome.downloads.download({
+            url: url,
+            filename: 'recorded_events.json',
+            saveAs: true,
+        });
     });
+    // if (recordedEvents.length > 0) {
+
     // }
 }
